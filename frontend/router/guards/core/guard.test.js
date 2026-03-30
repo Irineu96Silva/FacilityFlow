@@ -1,23 +1,18 @@
 import { beforeAll, describe, expect, it, mock } from "bun:test";
-import type { RouteLocationNormalized } from "vue-router";
 
-function createRoute(
-  authType: "authenticated" | "unauthenticated" | "public",
-  fullPath: string,
-  query: Record<string, unknown> = {},
-): RouteLocationNormalized {
+function createRoute(authType, fullPath, query = {}) {
   return {
     fullPath,
     meta: { authType },
     query,
-  } as RouteLocationNormalized;
+  };
 }
 
 describe("createAuthGuard", () => {
-  let mockedSession: unknown = { data: null, error: null };
+  let mockedSession = { data: null, error: null };
 
   beforeAll(() => {
-    (globalThis as any).window = {
+    globalThis.window = {
       environment: {
         baseUrl: "http://localhost:3000",
         socialLogin: {
@@ -41,19 +36,12 @@ describe("createAuthGuard", () => {
 
   it("permite acesso em /login quando sessao ausente", async () => {
     mockedSession = { data: null, error: null };
-
     const createAuthGuard = await loadGuard();
     const guard = createAuthGuard();
-    const nextCalls: unknown[] = [];
-    const next = (value?: unknown) => {
-      nextCalls.push(value);
-    };
+    const nextCalls = [];
+    const next = (value) => nextCalls.push(value);
 
-    await guard(
-      createRoute("unauthenticated", "/login"),
-      createRoute("public", "/"),
-      next as never,
-    );
+    await guard(createRoute("unauthenticated", "/login"), createRoute("public", "/"), next);
 
     expect(nextCalls).toEqual([undefined]);
   });
@@ -67,20 +55,17 @@ describe("createAuthGuard", () => {
       },
       error: null,
     };
-
     const createAuthGuard = await loadGuard();
     const guard = createAuthGuard();
-    const nextCalls: unknown[] = [];
-    const next = (value?: unknown) => {
-      nextCalls.push(value);
-    };
+    const nextCalls = [];
+    const next = (value) => nextCalls.push(value);
 
     await guard(
       createRoute("unauthenticated", "/login", {
         redirect: "/alguma-rota",
       }),
       createRoute("public", "/"),
-      next as never,
+      next,
     );
 
     expect(nextCalls).toEqual(["/admin/predial/dashboard"]);
@@ -88,18 +73,15 @@ describe("createAuthGuard", () => {
 
   it("mantem branch authenticated exigindo sessao e redirect para login", async () => {
     mockedSession = { data: null, error: null };
-
     const createAuthGuard = await loadGuard();
     const guard = createAuthGuard();
-    const nextCalls: unknown[] = [];
-    const next = (value?: unknown) => {
-      nextCalls.push(value);
-    };
+    const nextCalls = [];
+    const next = (value) => nextCalls.push(value);
 
     await guard(
       createRoute("authenticated", "/app/predial/supervisor"),
       createRoute("public", "/"),
-      next as never,
+      next,
     );
 
     expect(nextCalls).toEqual([
