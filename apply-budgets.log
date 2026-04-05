@@ -1,0 +1,138 @@
+Applying 0015_budget_system.sql...
+Error applying SQL: 36 |   async queryWithCache(queryString, params, query) {
+37 |     if (this.cache === void 0 || is(this.cache, NoopCache) || this.queryMetadata === void 0) {
+38 |       try {
+39 |         return await query();
+40 |       } catch (e) {
+41 |         throw new DrizzleQueryError(queryString, params, e);
+                   ^
+error: Failed query: -- Migration: Budget System
+-- Description: Creates tables for budget management (budgets, budget_items, budget_attachments, budget_history)
+
+-- Create budgets table
+CREATE TABLE IF NOT EXISTS "budgets" (
+	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
+	"company_id" uuid NOT NULL,
+	"ticket_id" uuid NOT NULL,
+	"work_order_id" uuid,
+	"budget_number" text NOT NULL UNIQUE,
+	"requested_by_user_id" uuid NOT NULL,
+	"requested_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"description" text NOT NULL,
+	"notes" text,
+	"total_cents" integer DEFAULT 0 NOT NULL,
+	"currency" text DEFAULT 'BRL' NOT NULL,
+	"valid_until" timestamp with time zone,
+	"status" text DEFAULT 'PENDING' NOT NULL,
+	"supervisor_approved_by_user_id" uuid,
+	"supervisor_approved_at" timestamp with time zone,
+	"supervisor_notes" text,
+	"admin_approved_by_user_id" uuid,
+	"admin_approved_at" timestamp with time zone,
+	"admin_notes" text,
+	"rejected_by_user_id" uuid,
+	"rejected_at" timestamp with time zone,
+	"rejection_reason" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "budgets_company_id_tenant_companies_id_fk" FOREIGN KEY ("company_id") REFERENCES "tenant_companies"("id") ON DELETE no action ON UPDATE no action,
+	CONSTRAINT "budgets_ticket_id_tickets_id_fk" FOREIGN KEY ("ticket_id") REFERENCES "tickets"("id") ON DELETE cascade ON UPDATE no action,
+	CONSTRAINT "budgets_work_order_id_work_orders_id_fk" FOREIGN KEY ("work_order_id") REFERENCES "work_orders"("id") ON DELETE cascade ON UPDATE no action,
+	CONSTRAINT "budgets_requested_by_user_id_users_id_fk" FOREIGN KEY ("requested_by_user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action,
+	CONSTRAINT "budgets_supervisor_approved_by_user_id_users_id_fk" FOREIGN KEY ("supervisor_approved_by_user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action,
+	CONSTRAINT "budgets_admin_approved_by_user_id_users_id_fk" FOREIGN KEY ("admin_approved_by_user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action,
+	CONSTRAINT "budgets_rejected_by_user_id_users_id_fk" FOREIGN KEY ("rejected_by_user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action
+);
+
+-- Create budget_items table
+CREATE TABLE IF NOT EXISTS "budget_items" (
+	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
+	"budget_id" uuid NOT NULL,
+	"type" text NOT NULL,
+	"description" text NOT NULL,
+	"quantity" numeric(10, 2) DEFAULT '1' NOT NULL,
+	"unit" text DEFAULT 'UN' NOT NULL,
+	"unit_price_cents" integer NOT NULL,
+	"total_cents" integer NOT NULL,
+	"notes" text,
+	"supplier" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "budget_items_budget_id_budgets_id_fk" FOREIGN KEY ("budget_id") REFERENCES "budgets"("id") ON DELETE cascade ON UPDATE no action
+);
+
+-- Create budget_attachments table
+CREATE TABLE IF NOT EXISTS "budget_attachments" (
+	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
+	"budget_id" uuid NOT NULL,
+	"filename" text NOT NULL,
+	"storage_key" text NOT NULL,
+	"mime" text NOT NULL,
+	"size" integer NOT NULL,
+	"description" text,
+	"uploaded_by_user_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "budget_attachments_budget_id_budgets_id_fk" FOREIGN KEY ("budget_id") REFERENCES "budgets"("id") ON DELETE cascade ON UPDATE no action,
+	CONSTRAINT "budget_attachments_uploaded_by_user_id_users_id_fk" FOREIGN KEY ("uploaded_by_user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action
+);
+
+-- Create budget_history table
+CREATE TABLE IF NOT EXISTS "budget_history" (
+	"id" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,
+	"budget_id" uuid NOT NULL,
+	"action" text NOT NULL,
+	"performed_by_user_id" uuid NOT NULL,
+	"previous_status" text,
+	"new_status" text,
+	"notes" text,
+	"changes_json" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "budget_history_budget_id_budgets_id_fk" FOREIGN KEY ("budget_id") REFERENCES "budgets"("id") ON DELETE cascade ON UPDATE no action,
+	CONSTRAINT "budget_history_performed_by_user_id_users_id_fk" FOREIGN KEY ("performed_by_user_id") REFERENCES "users"("id") ON DELETE no action ON UPDATE no action
+);
+
+-- Create indexes for budgets
+CREATE INDEX IF NOT EXISTS "budgets_company_id_idx" ON "budgets" USING btree ("company_id");
+CREATE INDEX IF NOT EXISTS "budgets_ticket_id_idx" ON "budgets" USING btree ("ticket_id");
+CREATE INDEX IF NOT EXISTS "budgets_status_idx" ON "budgets" USING btree ("status");
+CREATE INDEX IF NOT EXISTS "budgets_requested_by_idx" ON "budgets" USING btree ("requested_by_user_id");
+CREATE INDEX IF NOT EXISTS "budgets_created_at_idx" ON "budgets" USING btree ("created_at");
+
+-- Create indexes for budget_items
+CREATE INDEX IF NOT EXISTS "budget_items_budget_id_idx" ON "budget_items" USING btree ("budget_id");
+
+-- Create indexes for budget_attachments
+CREATE INDEX IF NOT EXISTS "budget_attachments_budget_id_idx" ON "budget_attachments" USING btree ("budget_id");
+
+-- Create indexes for budget_history
+CREATE INDEX IF NOT EXISTS "budget_history_budget_id_idx" ON "budget_history" USING btree ("budget_id");
+CREATE INDEX IF NOT EXISTS "budget_history_created_at_idx" ON "budget_history" USING btree ("created_at");
+
+params: 
+  query: "-- Migration: Budget System\n-- Description: Creates tables for budget management (budgets, budget_items, budget_attachments, budget_history)\n\n-- Create budgets table\nCREATE TABLE IF NOT EXISTS \"budgets\" (\n\t\"id\" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,\n\t\"company_id\" uuid NOT NULL,\n\t\"ticket_id\" uuid NOT NULL,\n\t\"work_order_id\" uuid,\n\t\"budget_number\" text NOT NULL UNIQUE,\n\t\"requested_by_user_id\" uuid NOT NULL,\n\t\"requested_at\" timestamp with time zone DEFAULT now() NOT NULL,\n\t\"description\" text NOT NULL,\n\t\"notes\" text,\n\t\"total_cents\" integer DEFAULT 0 NOT NULL,\n\t\"currency\" text DEFAULT 'BRL' NOT NULL,\n\t\"valid_until\" timestamp with time zone,\n\t\"status\" text DEFAULT 'PENDING' NOT NULL,\n\t\"supervisor_approved_by_user_id\" uuid,\n\t\"supervisor_approved_at\" timestamp with time zone,\n\t\"supervisor_notes\" text,\n\t\"admin_approved_by_user_id\" uuid,\n\t\"admin_approved_at\" timestamp with time zone,\n\t\"admin_notes\" text,\n\t\"rejected_by_user_id\" uuid,\n\t\"rejected_at\" timestamp with time zone,\n\t\"rejection_reason\" text,\n\t\"created_at\" timestamp with time zone DEFAULT now() NOT NULL,\n\t\"updated_at\" timestamp with time zone DEFAULT now() NOT NULL,\n\tCONSTRAINT \"budgets_company_id_tenant_companies_id_fk\" FOREIGN KEY (\"company_id\") REFERENCES \"tenant_companies\"(\"id\") ON DELETE no action ON UPDATE no action,\n\tCONSTRAINT \"budgets_ticket_id_tickets_id_fk\" FOREIGN KEY (\"ticket_id\") REFERENCES \"tickets\"(\"id\") ON DELETE cascade ON UPDATE no action,\n\tCONSTRAINT \"budgets_work_order_id_work_orders_id_fk\" FOREIGN KEY (\"work_order_id\") REFERENCES \"work_orders\"(\"id\") ON DELETE cascade ON UPDATE no action,\n\tCONSTRAINT \"budgets_requested_by_user_id_users_id_fk\" FOREIGN KEY (\"requested_by_user_id\") REFERENCES \"users\"(\"id\") ON DELETE no action ON UPDATE no action,\n\tCONSTRAINT \"budgets_supervisor_approved_by_user_id_users_id_fk\" FOREIGN KEY (\"supervisor_approved_by_user_id\") REFERENCES \"users\"(\"id\") ON DELETE no action ON UPDATE no action,\n\tCONSTRAINT \"budgets_admin_approved_by_user_id_users_id_fk\" FOREIGN KEY (\"admin_approved_by_user_id\") REFERENCES \"users\"(\"id\") ON DELETE no action ON UPDATE no action,\n\tCONSTRAINT \"budgets_rejected_by_user_id_users_id_fk\" FOREIGN KEY (\"rejected_by_user_id\") REFERENCES \"users\"(\"id\") ON DELETE no action ON UPDATE no action\n);\n\n-- Create budget_items table\nCREATE TABLE IF NOT EXISTS \"budget_items\" (\n\t\"id\" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,\n\t\"budget_id\" uuid NOT NULL,\n\t\"type\" text NOT NULL,\n\t\"description\" text NOT NULL,\n\t\"quantity\" numeric(10, 2) DEFAULT '1' NOT NULL,\n\t\"unit\" text DEFAULT 'UN' NOT NULL,\n\t\"unit_price_cents\" integer NOT NULL,\n\t\"total_cents\" integer NOT NULL,\n\t\"notes\" text,\n\t\"supplier\" text,\n\t\"created_at\" timestamp with time zone DEFAULT now() NOT NULL,\n\t\"updated_at\" timestamp with time zone DEFAULT now() NOT NULL,\n\tCONSTRAINT \"budget_items_budget_id_budgets_id_fk\" FOREIGN KEY (\"budget_id\") REFERENCES \"budgets\"(\"id\") ON DELETE cascade ON UPDATE no action\n);\n\n-- Create budget_attachments table\nCREATE TABLE IF NOT EXISTS \"budget_attachments\" (\n\t\"id\" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,\n\t\"budget_id\" uuid NOT NULL,\n\t\"filename\" text NOT NULL,\n\t\"storage_key\" text NOT NULL,\n\t\"mime\" text NOT NULL,\n\t\"size\" integer NOT NULL,\n\t\"description\" text,\n\t\"uploaded_by_user_id\" uuid NOT NULL,\n\t\"created_at\" timestamp with time zone DEFAULT now() NOT NULL,\n\tCONSTRAINT \"budget_attachments_budget_id_budgets_id_fk\" FOREIGN KEY (\"budget_id\") REFERENCES \"budgets\"(\"id\") ON DELETE cascade ON UPDATE no action,\n\tCONSTRAINT \"budget_attachments_uploaded_by_user_id_users_id_fk\" FOREIGN KEY (\"uploaded_by_user_id\") REFERENCES \"users\"(\"id\") ON DELETE no action ON UPDATE no action\n);\n\n-- Create budget_history table\nCREATE TABLE IF NOT EXISTS \"budget_history\" (\n\t\"id\" uuid PRIMARY KEY DEFAULT uuidv7() NOT NULL,\n\t\"budget_id\" uuid NOT NULL,\n\t\"action\" text NOT NULL,\n\t\"performed_by_user_id\" uuid NOT NULL,\n\t\"previous_status\" text,\n\t\"new_status\" text,\n\t\"notes\" text,\n\t\"changes_json\" text,\n\t\"created_at\" timestamp with time zone DEFAULT now() NOT NULL,\n\tCONSTRAINT \"budget_history_budget_id_budgets_id_fk\" FOREIGN KEY (\"budget_id\") REFERENCES \"budgets\"(\"id\") ON DELETE cascade ON UPDATE no action,\n\tCONSTRAINT \"budget_history_performed_by_user_id_users_id_fk\" FOREIGN KEY (\"performed_by_user_id\") REFERENCES \"users\"(\"id\") ON DELETE no action ON UPDATE no action\n);\n\n-- Create indexes for budgets\nCREATE INDEX IF NOT EXISTS \"budgets_company_id_idx\" ON \"budgets\" USING btree (\"company_id\");\nCREATE INDEX IF NOT EXISTS \"budgets_ticket_id_idx\" ON \"budgets\" USING btree (\"ticket_id\");\nCREATE INDEX IF NOT EXISTS \"budgets_status_idx\" ON \"budgets\" USING btree (\"status\");\nCREATE INDEX IF NOT EXISTS \"budgets_requested_by_idx\" ON \"budgets\" USING btree (\"requested_by_user_id\");\nCREATE INDEX IF NOT EXISTS \"budgets_created_at_idx\" ON \"budgets\" USING btree (\"created_at\");\n\n-- Create indexes for budget_items\nCREATE INDEX IF NOT EXISTS \"budget_items_budget_id_idx\" ON \"budget_items\" USING btree (\"budget_id\");\n\n-- Create indexes for budget_attachments\nCREATE INDEX IF NOT EXISTS \"budget_attachments_budget_id_idx\" ON \"budget_attachments\" USING btree (\"budget_id\");\n\n-- Create indexes for budget_history\nCREATE INDEX IF NOT EXISTS \"budget_history_budget_id_idx\" ON \"budget_history\" USING btree (\"budget_id\");\nCREATE INDEX IF NOT EXISTS \"budget_history_created_at_idx\" ON \"budget_history\" USING btree (\"created_at\");\n",
+ params: [],
+
+      at queryWithCache (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\drizzle-orm\pg-core\session.js:41:15)
+
+810 |   }
+811 | 
+812 |   function ErrorResponse(x) {
+813 |     if (query) {
+814 |       (query.cursorFn || query.describeFirst) && write(Sync)
+815 |       errorResponse = Errors.postgres(parseError(x))
+                                   ^
+PostgresError: relation "users" does not exist
+ severity_local: "ERROR",
+   severity: "ERROR",
+       file: "namespace.c",
+    routine: "RangeVarGetRelidExtended",
+       code: "42P01"
+
+      at ErrorResponse (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\postgres\src\connection.js:815:30)
+      at handle (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\postgres\src\connection.js:765:5)
+      at data (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\postgres\src\connection.js:457:5)
+      at emit (node:events:95:22)
+      at addChunk (internal:streams/readable:264:47)
+      at readableAddChunkPushByteMode (internal:streams/readable:242:18)
+      at data (node:net:280:52)
+

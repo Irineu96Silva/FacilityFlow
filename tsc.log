@@ -1,0 +1,2 @@
+backend/api/admin/predial/integrations/index.ts(45,21): error TS2532: Object is possibly 'undefined'.
+backend/api/admin/predial/integrations/index.ts(224,33): error TS2532: Object is possibly 'undefined'.

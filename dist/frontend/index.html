@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.ico.png" id="favicon" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      type="text/javascript"
+      src="/dynamic/js/environment.js"
+      
+    ></script>
+    <script type="text/javascript">
+      // Update favicon from config after environment loads
+      (function () {
+        function updateFavicon() {
+          if (window.environment && window.environment.faviconPath) {
+            const favicon = document.getElementById("favicon");
+            if (favicon) {
+              favicon.href = window.environment.faviconPath;
+            }
+          }
+        }
+        // Try immediately (in case environment.js already loaded)
+        updateFavicon();
+        // Also try after a short delay to ensure environment.js has loaded
+        setTimeout(updateFavicon, 100);
+      })();
+    </script>
+    <script
+      type="text/javascript"
+      src="/dynamic/js/colors.js"
+      
+    ></script>
+    <link
+      rel="stylesheet"
+      href="/dynamic/css/colors.css"
+      media="all"
+      onload="this.media = 'all'"
+      
+    />
+    <title>FacilityFlow</title>
+    <script type="module" crossorigin src="/assets/index-Do4IkDg-.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-PFsnSAV7.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

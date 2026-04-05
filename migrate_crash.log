@@ -1,0 +1,20 @@
+$ bun scripts/db/migrate.ts
+Running migrations manually...
+[DB] shouldMigrate true
+[DB] Running migrations...
+❌ Error running migrations: 21 |         bps: journalEntry.breakpoints,
+22 |         folderMillis: journalEntry.when,
+23 |         hash: crypto.createHash("sha256").update(query).digest("hex")
+24 |       });
+25 |     } catch {
+26 |       throw new Error(`No file ${migrationPath} found in ${migrationFolderTo} folder`);
+                     ^
+error: No file C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\packages\drizzle/0014_slippery_meggan.sql found in C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\packages\drizzle folder
+      at readMigrationFiles (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\drizzle-orm\migrator.js:26:17)
+      at migrate (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\drizzle-orm\postgres-js\migrator.js:3:22)
+      at <anonymous> (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\packages\db\index.ts:116:9)
+      at main (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\scripts\db\migrate.ts:12:11)
+      at C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\scripts\db\migrate.ts:21:1
+      at loadAndEvaluateModule (2:1)
+
+error: script "db:migrate" exited with code 1

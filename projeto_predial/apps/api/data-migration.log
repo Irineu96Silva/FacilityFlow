@@ -1,0 +1,75 @@
+Starting migration with ID mapping...
+Reading d1_backup_companies.json as UTF-16LE...
+Found 1 companies.
+Companies migrated.
+Reading d1_backup_plans.json as UTF-16LE...
+Found 3 plans.
+Plans migrated.
+Reading d1_backup_feature_flags.json as UTF-16LE...
+Found 18 feature flags.
+Feature Flags migrated.
+Reading d1_backup_users.json as UTF-16LE...
+Found 6 users.
+Users migrated.
+Reading d1_backup_units.json as UTF-16LE...
+Found 3 units.
+Units migrated.
+Reading d1_backup_service_types.json as UTF-16LE...
+Found 6 service types.
+Service Types migrated.
+Reading d1_backup_subscriptions.json as UTF-16LE...
+Found 1 subscriptions.
+Processing subscription 20f06853-3e95-4cf1-bf45-98c44d3bcb61, planId: seed-plan-pro
+Mapped planId seed-plan-pro to deaf3514-e8b9-4d0f-821f-4e8fae420194
+Migration failed: DrizzleQueryError: Failed query: insert into "subscriptions" ("id", "company_id", "plan_id", "status", "billing_cycle", "trial_start_at", "trial_end_at", "current_period_start", "current_period_end", "canceled_at", "cancel_reason", "paused_at", "scheduled_plan_id", "scheduled_change_at", "external_id", "external_provider", "external_customer_id", "custom_price_monthly", "custom_max_users", "custom_max_units", "custom_max_tickets", "created_at", "updated_at") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23) on conflict do nothing
+params: 20f06853-3e95-4cf1-bf45-98c44d3bcb61,f7f6bfa3-2a35-4be4-98b5-5d89412560ed,deaf3514-e8b9-4d0f-821f-4e8fae420194,active,monthly,,,2026-02-15T18:56:40.000Z,2026-03-17T18:56:40.000Z,,,,,,,,,,,,,2026-02-15T21:56:40.000Z,2026-02-15T21:56:40.000Z
+    at PostgresJsPreparedQuery.queryWithCache (C:\Users\User\Documents\SERVIÇOS PREDIAIS\projeto_predial\node_modules\.pnpm\drizzle-orm@0.45.1_@cloudfl_cab4b0bb97026a4b1c813910777035b1\node_modules\src\pg-core\session.ts:73:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async migrate (C:\Users\User\Documents\SERVIÇOS PREDIAIS\projeto_predial\apps\api\src\scripts\migrate-d1-to-postgres.ts:282:9) {
+  query: 'insert into "subscriptions" ("id", "company_id", "plan_id", "status", "billing_cycle", "trial_start_at", "trial_end_at", "current_period_start", "current_period_end", "canceled_at", "cancel_reason", "paused_at", "scheduled_plan_id", "scheduled_change_at", "external_id", "external_provider", "external_customer_id", "custom_price_monthly", "custom_max_users", "custom_max_units", "custom_max_tickets", "created_at", "updated_at") values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23) on conflict do nothing',
+  params: [
+    '20f06853-3e95-4cf1-bf45-98c44d3bcb61',
+    'f7f6bfa3-2a35-4be4-98b5-5d89412560ed',
+    'deaf3514-e8b9-4d0f-821f-4e8fae420194',
+    'active',
+    'monthly',
+    null,
+    null,
+    '2026-02-15T18:56:40.000Z',
+    '2026-03-17T18:56:40.000Z',
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    '2026-02-15T21:56:40.000Z',
+    '2026-02-15T21:56:40.000Z'
+  ],
+  cause: PostgresError: insert or update on table "subscriptions" violates foreign key constraint "subscriptions_plan_id_plans_id_fk"
+      at ErrorResponse (C:\Users\User\Documents\SERVIÇOS PREDIAIS\projeto_predial\node_modules\.pnpm\postgres@3.4.8\node_modules\postgres\cjs\src\connection.js:815:30)
+      at handle (C:\Users\User\Documents\SERVIÇOS PREDIAIS\projeto_predial\node_modules\.pnpm\postgres@3.4.8\node_modules\postgres\cjs\src\connection.js:489:6)
+      at Socket.data (C:\Users\User\Documents\SERVIÇOS PREDIAIS\projeto_predial\node_modules\.pnpm\postgres@3.4.8\node_modules\postgres\cjs\src\connection.js:324:9)
+      at Socket.emit (node:events:519:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '23503',
+    detail: 'Key (plan_id)=(deaf3514-e8b9-4d0f-821f-4e8fae420194) is not present in table "plans".',
+    schema_name: 'public',
+    table_name: 'subscriptions',
+    constraint_name: 'subscriptions_plan_id_plans_id_fk',
+    file: 'ri_triggers.c',
+    line: '2599',
+    routine: 'ri_ReportViolation'
+  }
+}

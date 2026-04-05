@@ -1,0 +1,68 @@
+[DB] shouldMigrate true
+[DB] Running migrations...
+{
+  severity_local: "NOTICE",
+  severity: "NOTICE",
+  code: "42P06",
+  message: "schema \"drizzle\" already exists, skipping",
+  file: "schemacmds.c",
+  line: "132",
+  routine: "CreateSchemaCommand",
+}
+{
+  severity_local: "NOTICE",
+  severity: "NOTICE",
+  code: "42P07",
+  message: "relation \"__drizzle_migrations\" already exists, skipping",
+  file: "parse_utilcmd.c",
+  line: "208",
+  routine: "transformCreateStmt",
+}
+{
+  severity_local: "NOTICE",
+  severity: "NOTICE",
+  code: "00000",
+  message: "drop cascades to 2 other objects",
+  detail: "drop cascades to constraint exchange_rates_currency_from_id_currencies_id_fk on table billing.exchange_rates\ndrop cascades to constraint exchange_rates_currency_to_id_currencies_id_fk on table billing.exchange_rates",
+  file: "dependency.c",
+  line: "1165",
+  routine: "reportDependentObjects",
+}
+36 |   async queryWithCache(queryString, params, query) {
+37 |     if (this.cache === void 0 || is(this.cache, NoopCache) || this.queryMetadata === void 0) {
+38 |       try {
+39 |         return await query();
+40 |       } catch (e) {
+41 |         throw new DrizzleQueryError(queryString, params, e);
+                   ^
+error: Failed query: 
+ALTER TABLE "invoices" ADD CONSTRAINT "invoices_subscription_id_subscriptions_id_fk" FOREIGN KEY ("subscription_id") REFERENCES "public"."subscriptions"("id") ON DELETE no action ON UPDATE no action;
+params: 
+  query: "\nALTER TABLE \"invoices\" ADD CONSTRAINT \"invoices_subscription_id_subscriptions_id_fk\" FOREIGN KEY (\"subscription_id\") REFERENCES \"public\".\"subscriptions\"(\"id\") ON DELETE no action ON UPDATE no action;",
+ params: [],
+
+      at queryWithCache (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\drizzle-orm\pg-core\session.js:41:15)
+
+810 |   }
+811 | 
+812 |   function ErrorResponse(x) {
+813 |     if (query) {
+814 |       (query.cursorFn || query.describeFirst) && write(Sync)
+815 |       errorResponse = Errors.postgres(parseError(x))
+                                   ^
+PostgresError: relation "public.subscriptions" does not exist
+ severity_local: "ERROR",
+   severity: "ERROR",
+       file: "namespace.c",
+    routine: "RangeVarGetRelidExtended",
+       code: "42P01"
+
+      at ErrorResponse (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\postgres\src\connection.js:815:30)
+      at handle (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\postgres\src\connection.js:765:5)
+      at data (C:\Users\User\Documents\projetos\servicos_prediais\gestao_predial\node_modules\postgres\src\connection.js:457:5)
+      at emit (node:events:95:22)
+      at addChunk (internal:streams/readable:264:47)
+      at readableAddChunkPushByteMode (internal:streams/readable:242:18)
+      at data (node:net:280:52)
+
+Bun v1.3.9 (Windows x64)

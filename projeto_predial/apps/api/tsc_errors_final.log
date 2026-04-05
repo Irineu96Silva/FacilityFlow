@@ -1,0 +1,18 @@
+﻿src/ai/ai.service.ts(146,13): error TS2322: Type 'string | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/billing/routes/subscriptions.ts(62,13): error TS18047: 'subscription' is possibly 'null'.
+src/billing/routes/subscriptions.ts(63,17): error TS18047: 'subscription' is possibly 'null'.
+src/billing/routes/subscriptions.ts(64,21): error TS18047: 'subscription' is possibly 'null'.
+src/billing/services/subscriptionService.ts(76,74): error TS18047: 'subscription' is possibly 'null'.
+src/features/routes/features.ts(107,15): error TS18047: 'result' is possibly 'null'.
+src/features/routes/features.ts(107,15): error TS18047: 'result.featureFlag' is possibly 'null'.
+src/features/routes/features.ts(108,15): error TS18047: 'result' is possibly 'null'.
+src/features/routes/features.ts(108,15): error TS18047: 'result.featureFlag' is possibly 'null'.
+src/features/routes/features.ts(109,18): error TS18047: 'result' is possibly 'null'.
+src/features/routes/features.ts(110,20): error TS18047: 'result' is possibly 'null'.
+src/routes/media.ts(75,9): error TS18047: 'media' is possibly 'null'.
+src/routes/media.ts(76,11): error TS18047: 'media' is possibly 'null'.
+src/routes/media.ts(77,11): error TS18047: 'media' is possibly 'null'.
+src/routes/media.ts(78,11): error TS18047: 'media' is possibly 'null'.
+src/routes/media.ts(79,16): error TS18047: 'media' is possibly 'null'.
+src/routes/media.ts(123,14): error TS18047: 'media' is possibly 'null'.

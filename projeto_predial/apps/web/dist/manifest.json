@@ -1,0 +1,36 @@
+{
+  "name": "Gestão de Manutenção Predial",
+  "short_name": "Manutenção",
+  "description": "Sistema de gestão de manutenção predial com controle de chamados, fotos e relatórios",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Novo Chamado",
+      "short_name": "Novo",
+      "description": "Criar um novo chamado",
+      "url": "/admin/dashboard?action=new",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
