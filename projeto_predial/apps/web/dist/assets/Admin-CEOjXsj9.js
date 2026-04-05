@@ -1,1 +1,0 @@
-import{d as o,c as t,q as n,o as s,f as a,_ as r}from"./index-Q-7OH7vz.js";const _={class:"admin-wrapper q-pa-md"},c=o({__name:"Admin",setup(p){return(d,m)=>{const e=t("router-view");return s(),n("div",_,[a(e)])}}}),f=r(c,[["__scopeId","data-v-714e7f43"]]);export{f as default};

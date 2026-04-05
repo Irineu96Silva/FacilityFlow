@@ -1,3 +1,0 @@
-﻿src/ai/ai.service.ts(147,13): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type '{ companyId: string; traceId?: string | undefined; action: string; provider: string; model: string; requestContent?: string | undefined; responseContent?: string | undefined; inputTokens?: number | undefined; outputTokens?: number | undefined; latencyMs: number; status: string; errorDetails?: string | undefined; }'.
-src/billing/services/subscriptionService.ts(76,74): error TS18047: 'subscription' is possibly 'null'.
-src/routes/media.ts(123,14): error TS18047: 'media' is possibly 'null'.
